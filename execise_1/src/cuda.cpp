@@ -3,33 +3,55 @@
 
 bool InitCUDA()
 {
-    int count;
+    int deviceCount;
 
-    cudaGetDeviceCount(&count);
-    if(count == 0) {
+    cudaGetDeviceCount(&deviceCount);
+    if(deviceCount == 0) {
         fprintf(stderr, "There is no device.\n");
         return false;
     }
 
-    int i;
-    for(i = 0; i < count; i++) {
-        cudaDeviceProp prop;
-        if(cudaGetDeviceProperties(&prop, i) == cudaSuccess) {
-            if(prop.major >= 1) {
+    int device;
+    for(device = 0; device < deviceCount; device++) {
+        cudaDeviceProp deviceProp;
+        if(cudaGetDeviceProperties(&deviceProp, device) == cudaSuccess) {
+            if(deviceProp.major >= 1) {
                 break;
             }
         }
     }
 
-    if(i == count) {
+    if(device == deviceCount) {
         fprintf(stderr, "There is no device supporting CUDA 1.x.\n");
         return false;
     }
 
-    cudaSetDevice(i);
+    cudaSetDevice(device);
 
     return true;
 }
+
+int main(){
+    if(!InitCUDA()){
+        printf("CUDA initialized. \n");
+        return 0;
+    }
+    int deviceCount;
+    cudaGetDeviceCount(&deviceCount);
+    int device;
+    for (device = 0; device < deviceCount; ++device) {
+        cudaDeviceProp deviceProp;
+        cudaGetDeviceProperties(&deviceProp, device);
+        printf("Device %d has compute capability %d.%d.\n",
+            device, deviceProp.major, deviceProp.minor);
+    }
+    return 0;
+}
+
+
+
+
+
 
 // __global__ void VecAdd(float *A , float* B, float* C){
 //     int i = threadIdx.x;

@@ -2,4 +2,11 @@
 
 `nvidia/cuda:10.0-cudnn7-devel`
 
-docker run --runtime=nvidia --rm -it -v ~/Desktop/c++/:/cpp/ -w /cpp/ nvidia/cuda:10.0-cudnn7-devel bash
+```
+docker run -it \
+            --rm \
+            --runtime=nvidia \
+            -v ~/Desktop/c++/:/cpp/ \
+            -w /cpp/ \
+            nvidia/cuda:10.0-cudnn7-devel bash
+```
