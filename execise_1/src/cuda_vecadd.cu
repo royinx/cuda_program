@@ -17,7 +17,7 @@ int main()
     float* h_B = (float*)malloc(size);
 
     // Initialize input vectors
-    ...
+    // ...
 
     // Allocate vectors in device memory
     float* d_A;
@@ -33,8 +33,7 @@ int main()
 
     // Invoke kernel
     int threadsPerBlock = 256;
-    int blocksPerGrid =
-            (N + threadsPerBlock - 1) / threadsPerBlock;
+    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
     VecAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, N);
 
     // Copy result from device memory to host memory
@@ -47,5 +46,5 @@ int main()
     cudaFree(d_C);
             
     // Free host memory
-    ...
+    // ...
 }
