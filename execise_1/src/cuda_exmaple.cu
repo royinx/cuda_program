@@ -7,6 +7,7 @@ using namespace std;
 #define RADIUS 3
 #define BLOCK_SIZE 16
 
+// device code
 __global__ void stencil_1d(int*in, int*out) {
         __shared__ int temp[BLOCK_SIZE  + 2 * RADIUS];
         int gindex = threadIdx.x + blockIdx.x * blockDim.x;
@@ -31,12 +32,15 @@ __global__ void stencil_1d(int*in, int*out) {
         out[gindex]  = result;
 }
 
+
+// host code 
 void fill_ints(int*x, int n) {
     fill_n(x,  n, 1);
 }
 
+// host code
 int main(void) {
-    int*in, *out;
+    int *in, *out;
     // host  copies  of a, b, c
     int *d_in, *d_out;
     // device  copies  of a, b, c
@@ -55,6 +59,7 @@ int main(void) {
     cudaMemcpy(d_out,  out,  size, cudaMemcpyHostToDevice);
     
     // Launch  stencil_1d()  kernel  on  GPU
+    
     stencil_1d<<<N/BLOCK_SIZE,BLOCK_SIZE>>>(d_in+ RADIUS, d_out+ RADIUS);
     
     // Copy  result  back  to  host
