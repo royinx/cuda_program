@@ -9,3 +9,5 @@ bin/*
 .DS_Store
 
 *.out
+*.o
+*.so

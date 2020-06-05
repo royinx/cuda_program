@@ -1,0 +1,51 @@
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y \
+    libopencv-dev \
+    python-dev \
+    python3-pip \
+    libgomp1 \
+    nano \
+    wget \
+    curl \
+    qtbase5-dev \
+    libcurl4-gnutls-dev \	
+    git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN git clone https://github.com/Kitware/CMake cmake && \
+	cd cmake && \
+	./bootstrap --system-curl && \
+	make -j"$(nproc)" install
+
+
+ENV CMAKE_VERSION="3.16.4"
+RUN wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
+	tar -xzf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz && \
+	export PATH=$PWD/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:$PATH
+
+RUN git clone --depth 10 --branch 4.0.1 https://github.com/opencv/opencv opencv && \
+    git clone --depth 10 --branch 4.0.1 https://github.com/opencv/opencv_contrib.git opencv_contrib && \
+    mkdir -p opencv/build && cd opencv/build && \
+    cmake -D CMAKE_BUILD_TYPE=RELEASE \
+          -D CMAKE_INSTALL_PREFIX=/usr/local \
+          -D WITH_IPP=OFF \
+          -D WITH_CUDA=OFF \
+          -D WITH_TBB=ON \
+          -D WITH_V4L=ON \
+          -D WITH_QT=ON \                   
+          -D WITH_OPENCL=ON \
+          -D WITH_GTK=ON \
+          -D WITH_LIBV4L=ON \
+          -D BUILD_TESTS=OFF \
+          -D BUILD_PERF_TESTS=OFF \
+          -D WITH_FFMPEG=ON \
+          -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+          .. && \
+    make -j"$(nproc)" install && \
+    ln -s /usr/local/include/opencv4/opencv2 /usr/local/include/opencv2
