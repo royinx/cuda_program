@@ -1,0 +1,7 @@
+{"model":"clothes_seg",
+"channels":3,
+"net_h": 360, 
+"net_w": 640, 
+"score_threshold":0.5,
+"class":[0],
+"ignore_class":[0,1,2,3,4,5,9,10,13,14,15,16,17,18]}
